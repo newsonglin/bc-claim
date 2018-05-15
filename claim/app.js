@@ -1,17 +1,6 @@
 /**
- * Copyright 2017 IBM All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the 'License');
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an 'AS IS' BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * The app configuration js file, be careful to change it
+ * 
  */
 'use strict';
 var log4js = require('log4js');
@@ -31,37 +20,50 @@ var cors = require('cors');
 require('./config.js');
 var hfc = require('fabric-client');
 
-var helper = require('./app/helper.js');
-var createChannel = require('./app/create-channel.js');
-var join = require('./app/join-channel.js');
-var install = require('./app/install-chaincode.js');
-var instantiate = require('./app/instantiate-chaincode.js');
-var invoke = require('./app/invoke-transaction.js');
-var query = require('./app/query.js');
+var helper = require('./app/services/helper.js');
+var createChannel = require('./app/services/create-channel.js');
+var join = require('./app/services/join-channel.js');
+var install = require('./app/services/install-chaincode.js');
+var instantiate = require('./app/services/instantiate-chaincode.js');
+var invoke = require('./app/services/invoke-transaction.js');
+var query = require('./app/services/query.js');
 var host = process.env.HOST || hfc.getConfigSetting('host');
 var port = process.env.PORT || hfc.getConfigSetting('port');
+
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////// SET CONFIGURATONS ////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+
+//Cross-origin resource sharing (CORS) is a mechanism that allows restricted 
+//resources (e.g. fonts) on a web page to be requested from another domain outside the domain from which the first resource was served
 app.options('*', cors());
 app.use(cors());
+
+
+app.use('/web', express.static(process.cwd() + '/app/web'));
+
+app.get('/', function (req, res) {
+  res.sendfile('./app/index.html');
+});
+
+
 //support parsing of application/json type post data
-app.use(bodyParser.json());
+app.use('/services',bodyParser.json());
 //support parsing of application/x-www-form-urlencoded post data
-app.use(bodyParser.urlencoded({
+app.use('/services',bodyParser.urlencoded({
 	extended: false
 }));
 // set secret variable
 app.set('secret', 'thisismysecret');
-app.use(expressJWT({
+app.use('/services',expressJWT({
 	secret: 'thisismysecret'
 }).unless({
-	path: ['/users']
+	path: ['/services/users']
 }));
-app.use(bearerToken());
-app.use(function(req, res, next) {
+app.use('/services',bearerToken());
+app.use('/services',function(req, res, next) {
 	logger.debug(' ------>>>>>> new request for %s',req.originalUrl);
-	if (req.originalUrl.indexOf('/users') >= 0) {
+	if (req.originalUrl.indexOf('/services/users') >= 0) {
 		return next();
 	}
 
@@ -106,7 +108,7 @@ function getErrorMessage(field) {
 ///////////////////////// REST ENDPOINTS START HERE ///////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 // Register and enroll user
-app.post('/users', async function(req, res) {
+app.post('/services/users', async function(req, res) {
 	var username = req.body.username;
 	var orgName = req.body.orgName;
 	logger.debug('End point : /users');
@@ -138,7 +140,7 @@ app.post('/users', async function(req, res) {
 
 });
 // Create Channel
-app.post('/channels', async function(req, res) {
+app.post('/services/channels', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< C R E A T E  C H A N N E L >>>>>>>>>>>>>>>>>');
 	logger.debug('End point : /channels');
 	var channelName = req.body.channelName;
@@ -158,7 +160,7 @@ app.post('/channels', async function(req, res) {
 	res.send(message);
 });
 // Join Channel
-app.post('/channels/:channelName/peers', async function(req, res) {
+app.post('/services/channels/:channelName/peers', async function(req, res) {
 	logger.info('<<<<<<<<<<<<<<<<< J O I N  C H A N N E L >>>>>>>>>>>>>>>>>');
 	var channelName = req.params.channelName;
 	var peers = req.body.peers;
@@ -180,7 +182,7 @@ app.post('/channels/:channelName/peers', async function(req, res) {
 	res.send(message);
 });
 // Install chaincode on target peers
-app.post('/chaincodes', async function(req, res) {
+app.post('/services/chaincodes', async function(req, res) {
 	logger.debug('==================== INSTALL CHAINCODE ==================');
 	var peers = req.body.peers;
 	var chaincodeName = req.body.chaincodeName;
@@ -215,7 +217,7 @@ app.post('/chaincodes', async function(req, res) {
 	let message = await install.installChaincode(peers, chaincodeName, chaincodePath, chaincodeVersion, chaincodeType, req.username, req.orgname)
 	res.send(message);});
 // Instantiate chaincode on target peers
-app.post('/channels/:channelName/chaincodes', async function(req, res) {
+app.post('/services/channels/:channelName/chaincodes', async function(req, res) {
 	logger.debug('==================== INSTANTIATE CHAINCODE ==================');
 	var peers = req.body.peers;
 	var chaincodeName = req.body.chaincodeName;
@@ -256,7 +258,7 @@ app.post('/channels/:channelName/chaincodes', async function(req, res) {
 	res.send(message);
 });
 // Invoke transaction on chaincode on target peers
-app.post('/channels/:channelName/chaincodes/:chaincodeName', async function(req, res) {
+app.post('/services/channels/:channelName/chaincodes/:chaincodeName', async function(req, res) {
 	logger.debug('==================== INVOKE ON CHAINCODE ==================');
 	var peers = req.body.peers;
 	var chaincodeName = req.params.chaincodeName;
@@ -288,7 +290,7 @@ app.post('/channels/:channelName/chaincodes/:chaincodeName', async function(req,
 	res.send(message);
 });
 // Query on chaincode on target peers
-app.get('/channels/:channelName/chaincodes/:chaincodeName', async function(req, res) {
+app.get('/services/channels/:channelName/chaincodes/:chaincodeName', async function(req, res) {
 	logger.debug('==================== QUERY BY CHAINCODE ==================');
 	var channelName = req.params.channelName;
 	var chaincodeName = req.params.chaincodeName;
@@ -325,7 +327,7 @@ app.get('/channels/:channelName/chaincodes/:chaincodeName', async function(req, 
 	res.send(message);
 });
 //  Query Get Block by BlockNumber
-app.get('/channels/:channelName/blocks/:blockId', async function(req, res) {
+app.get('/services/channels/:channelName/blocks/:blockId', async function(req, res) {
 	logger.debug('==================== GET BLOCK BY NUMBER ==================');
 	let blockId = req.params.blockId;
 	let peer = req.query.peer;
@@ -341,7 +343,7 @@ app.get('/channels/:channelName/blocks/:blockId', async function(req, res) {
 	res.send(message);
 });
 // Query Get Transaction by Transaction ID
-app.get('/channels/:channelName/transactions/:trxnId', async function(req, res) {
+app.get('/services/channels/:channelName/transactions/:trxnId', async function(req, res) {
 	logger.debug('================ GET TRANSACTION BY TRANSACTION_ID ======================');
 	logger.debug('channelName : ' + req.params.channelName);
 	let trxnId = req.params.trxnId;
@@ -355,7 +357,7 @@ app.get('/channels/:channelName/transactions/:trxnId', async function(req, res) 
 	res.send(message);
 });
 // Query Get Block by Hash
-app.get('/channels/:channelName/blocks', async function(req, res) {
+app.get('/services/channels/:channelName/blocks', async function(req, res) {
 	logger.debug('================ GET BLOCK BY HASH ======================');
 	logger.debug('channelName : ' + req.params.channelName);
 	let hash = req.query.hash;
@@ -369,7 +371,7 @@ app.get('/channels/:channelName/blocks', async function(req, res) {
 	res.send(message);
 });
 //Query for Channel Information
-app.get('/channels/:channelName', async function(req, res) {
+app.get('/services/channels/:channelName', async function(req, res) {
 	logger.debug('================ GET CHANNEL INFORMATION ======================');
 	logger.debug('channelName : ' + req.params.channelName);
 	let peer = req.query.peer;
@@ -378,7 +380,7 @@ app.get('/channels/:channelName', async function(req, res) {
 	res.send(message);
 });
 //Query for Channel instantiated chaincodes
-app.get('/channels/:channelName/chaincodes', async function(req, res) {
+app.get('/services/channels/:channelName/chaincodes', async function(req, res) {
 	logger.debug('================ GET INSTANTIATED CHAINCODES ======================');
 	logger.debug('channelName : ' + req.params.channelName);
 	let peer = req.query.peer;
@@ -387,7 +389,7 @@ app.get('/channels/:channelName/chaincodes', async function(req, res) {
 	res.send(message);
 });
 // Query to fetch all Installed/instantiated chaincodes
-app.get('/chaincodes', async function(req, res) {
+app.get('/services/chaincodes', async function(req, res) {
 	var peer = req.query.peer;
 	var installType = req.query.type;
 	logger.debug('================ GET INSTALLED CHAINCODES ======================');
@@ -396,7 +398,7 @@ app.get('/chaincodes', async function(req, res) {
 	res.send(message);
 });
 // Query to fetch channels
-app.get('/channels', async function(req, res) {
+app.get('/services/channels', async function(req, res) {
 	logger.debug('================ GET CHANNELS ======================');
 	logger.debug('peer: ' + req.query.peer);
 	var peer = req.query.peer;
