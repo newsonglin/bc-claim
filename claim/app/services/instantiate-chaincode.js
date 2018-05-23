@@ -22,14 +22,14 @@ var helper = require('./helper.js');
 var logger = helper.getLogger('instantiate-chaincode');
 
 var instantiateChaincode = async function(peers, channelName, chaincodeName, chaincodeVersion, functionName, chaincodeType, args, username, org_name) {
-	logger.debug('\n\n============ Instantiate chaincode on channel ' + channelName +
+	logger.info('\n\n============ Instantiate chaincode on channel ' + channelName +
 		' ============\n');
 	var error_message = null;
 
 	try {
 		// first setup the client for this org
 		var client = await helper.getClientForOrg(org_name, username);
-		logger.debug('Successfully got the fabric client for the organization "%s"', org_name);
+		logger.info('Successfully got the fabric client for the organization "%s"', org_name);
 		var channel = client.getChannel(channelName);
 		if(!channel) {
 			let message = util.format('Channel %s was not defined in the connection profile', channelName);
@@ -56,7 +56,9 @@ var instantiateChaincode = async function(peers, channelName, chaincodeName, cha
 		if (functionName)
 			request.fcn = functionName;
 
-		let results = await channel.sendInstantiateProposal(request, 60000); //instantiate takes much longer
+		logger.info('=================$$$$$$$================',request);
+		
+		let results = await channel.sendInstantiateProposal(request, 160000); //instantiate takes much longer
 
 		// the returned object has both the endorsement results
 		// and the actual proposal, the proposal will be needed

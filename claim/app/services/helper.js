@@ -115,7 +115,8 @@ var getRegisteredUser = async function(username, userOrg, isJson) {
 
 
 var setupChaincodeDeploy = function() {
-	process.env.GOPATH = path.join(__dirname, hfc.getConfigSetting('CC_SRC_PATH'));
+	//Songlin: We moved helper.js to a low-level services folder, so we need adjust path here.
+	process.env.GOPATH = path.join(__dirname+'/../', hfc.getConfigSetting('CC_SRC_PATH'));
 };
 
 var getLogger = function(moduleName) {

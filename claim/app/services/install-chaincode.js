@@ -26,6 +26,8 @@ var installChaincode = async function(peers, chaincodeName, chaincodePath,
 	chaincodeVersion, chaincodeType, username, org_name) {
 	logger.debug('\n\n============ Install chaincode on organizations ============\n');
 	helper.setupChaincodeDeploy();
+	logger.info('++++++++++++++++++++++++++++++++++++++++++++++++++',process.env.GOPATH);
+
 	let error_message = null;
 	try {
 		logger.info('Calling peers in organization "%s" to join the channel', org_name);

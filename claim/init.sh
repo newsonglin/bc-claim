@@ -1,4 +1,4 @@
-
+sleep 5s
 #Invoke users web service and then extract the token exactaly,I'm proud of this method
 MY_TOKEN=`curl -s -X POST http://localhost:4000/services/users -H "content-type: application/x-www-form-urlencoded" -d 'username=Jim&orgName=Org1'|grep -oP '(?<="token":").*?(?=")'`
 
@@ -38,14 +38,18 @@ curl -s -X POST \
   -d '{
 	"peers": ["peer0.org1.exigen.com","peer1.org1.exigen.com"],
 	"chaincodeName":"mycc",
-	"chaincodePath":"../../../artifacts/src/github.com/claim/go",
+	"chaincodePath":"github.com/claim/go",	
 	"chaincodeType": "golang",
 	"chaincodeVersion":"v0"
 }'
 
 
 
+
 # Instantiate chaincode
+echo -e  "\n********************Wait for 15s*********************"
+sleep 15s
+
 echo -e  "\n********************Instantiate chaincode*********************"
 
 curl -s -X POST \
@@ -57,6 +61,6 @@ curl -s -X POST \
 	"chaincodeName":"mycc",
 	"chaincodeVersion":"v0",
 	"chaincodeType": "golang",
-	"args":nil
+	"args":["a","100","b","200"]
 }'
       
