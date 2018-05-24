@@ -39,7 +39,7 @@
 		  <h2>Medical Record</h2>
 		  <p>This table show the medical records which already populated into the fabric block chain</p>                                                                                      
 		  <div class="table-responsive">          
-		  <table class="table">
+		  <table class="table" id="mdTable">
 			<thead>
 			  <tr>
 				<th>#</th>
@@ -63,5 +63,51 @@
 		  </table>
 		  </div>
 		</div>
+		
+		
+<script type="text/javascript">
+
+$(document).ready(function() {
+    $.ajax({
+        url: 'http://localhost:4000/services/channels/mychannel/chaincodes/mycc?peer=peer0.org1.exigen.com&fcn=searchAll&args=%5B%22MR0%22%5D',
+        dataType : "json",
+        contentType: "application/json; charset=utf-8",
+        // dataType: "jsonp",
+        //data: '{"username": "Jim", "orgName":"Org1"}',
+        type: 'GET',
+        jsonpCallback: 'callback', 
+        headers: {
+          "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1MjcxNjY1MjAsInVzZXJuYW1lIjoiSmltIiwib3JnTmFtZSI6Ik9yZzEiLCJpYXQiOjE1MjcxMzA1MjB9.11pZDEA_0tHHC2-Rore-s6N2-Hi4KqVd2jLG60BncZs"
+        },
+        success: function (data) {            
+            console.log('Success: ')
+            if(data){
+                var len = data.length;
+                var txt = "";
+                if(len > 0){
+                    for(var i=0;i<len;i++){
+                            txt += "<tr>";
+                            txt += "<td>"+data[i].Key+"</td>";
+                            txt += "<td>"+data[i].Record.medicalID+"</td>";
+                            txt += "<td>"+data[i].Record.hospital+"</td>";
+                            txt += "<td>"+data[i].Record.medicines+"</td>";
+                            txt += "<td>"+data[i].Record.owner+"</td>";
+                            txt += "<td><a href=#>Update</a></td>";
+                            txt += "</tr>";
+                    }
+                    if(txt != ""){
+                        $("#mdTable").append(txt);
+                    }
+                }
+            }
+        },
+        error: function (xhr, status, error) {
+            console.log('Error: ' + error.message);
+            $('#lblResponse').html('Error connecting to the server.'+data.message);
+        },
+    });
+});
+</script>
+
   </body>
 </html>

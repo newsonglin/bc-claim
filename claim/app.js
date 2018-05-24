@@ -254,8 +254,7 @@ app.post('/services/channels/:channelName/chaincodes', async function(req, res) 
 		return;
 	}
 
-	let message = await instantiate.instantiateChaincode(peers, channelName, chaincodeName, chaincodeVersion,  fcn, chaincodeType,args, req.username, req.orgname);
-	
+	let message = await instantiate.instantiateChaincode(peers, channelName, chaincodeName, chaincodeVersion,fcn, chaincodeType,args, req.username, req.orgname);
 	res.send(message);
 });
 // Invoke transaction on chaincode on target peers

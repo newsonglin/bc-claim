@@ -9,18 +9,21 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
-
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
     <!-- Custom styles for this template -->
+    <link href="../css/main.css" rel="stylesheet">
+
     <link href="../css/login.css" rel="stylesheet">
   </head>
 
   <body class="text-center">
-    <form class="form-signin" action="./main.html">
+    <form id="loginForm" class="form-signin" action="./main.html" >
       <img class="mb-4" src="../img/logo.png" alt="" width="60" height="60">
       <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-      <label for="inputEmail" class="sr-only">Email address</label>
-      <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+      <label for="inputEmail" class="sr-only">User Login Id</label>
+      <input type="input" id="inputEmail" class="form-control" placeholder="Login Id" required autofocus>
       <label for="inputPassword" class="sr-only">Password</label>
       <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
       <div class="checkbox mb-3">
@@ -28,9 +31,24 @@
           <input type="checkbox" value="remember-me"> Remember me
         </label>
       </div>
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      <button class="btn btn-lg btn-primary btn-block" id="loginBtn" type="submit">Sign in</button>
+       <div class="error-messages">
+        <label id="errorLabel" class="error">    aaa     </label>
+      </div>
       <p class="mt-5 mb-3 text-muted">&copy; 2017-2018</p>
     </form>
     <object name="foo" type="text/html" data="../include/foo.inc"></object>
+
+ <script type="text/javascript">    
+  
+$( "#loginForm" ).submit(function( event ) {
+
+		alert("ss");
+				
+		
+});
+
+</script>
+
   </body>
 </html>
