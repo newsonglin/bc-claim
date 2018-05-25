@@ -10,6 +10,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
     <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/bc-claim.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
     <!-- Custom styles for this template -->
@@ -22,8 +23,8 @@
     <form id="loginForm" class="form-signin" action="./main.html" >
       <img class="mb-4" src="../img/logo.png" alt="" width="60" height="60">
       <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-      <label for="inputEmail" class="sr-only">User Login Id</label>
-      <input type="input" id="inputEmail" class="form-control" placeholder="Login Id" required autofocus>
+      <label for="inputLoginId" class="sr-only">User Login Id</label>
+      <input type="input" id="inputLoginId" class="form-control" placeholder="Login Id" required autofocus>
       <label for="inputPassword" class="sr-only">Password</label>
       <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
       <div class="checkbox mb-3">
@@ -31,20 +32,93 @@
           <input type="checkbox" value="remember-me"> Remember me
         </label>
       </div>
-      <button class="btn btn-lg btn-primary btn-block" id="loginBtn" type="submit">Sign in</button>
+      <button class="btn btn-lg btn-primary btn-block" id="loginBtn" type="button">Sign in</button>
        <div class="error-messages">
-        <label id="errorLabel" class="error">    aaa     </label>
+        <label id="errorLabel" class="error"></label>
       </div>
       <p class="mt-5 mb-3 text-muted">&copy; 2017-2018</p>
     </form>
-    <object name="foo" type="text/html" data="../include/foo.inc"></object>
 
- <script type="text/javascript">    
+<script type="text/javascript">  
+var outboxToken="";
+
+/**
+* Get internal token for later invoke
+*/
+function getToken(){
+	return     $.ajax({
+        url: 'http://localhost:4000/services/users',
+        dataType : "json",
+        contentType: "application/json; charset=utf-8",
+        // dataType: "jsonp",
+        data: '{"username": "Songlin", "orgName":"Org1"}',
+        type: 'POST',
+        jsonpCallback: 'callback',
+        
+        success: function (data) {            
+            console.log('Success: ')
+            if(data){
+                outboxToken=data.token;
+            }
+        },
+        error: function (xhr, status, error) {
+            console.log('Error: ' + error.message);
+            $('#errorLabel').html('Error connecting to the server.');
+        },
+    });
+} 
   
-$( "#loginForm" ).submit(function( event ) {
-
-		alert("ss");
+/**
+* login verification function
+*/
+$( "#loginBtn" ).click(function( event ) {
+	$.when(getToken()).done(function(){			
+			
+		if(outboxToken==""){
+			event.preventDefault();
+			console.log('Error get the token ');
+			$('#errorLabel').html('Error connecting to the server.');
+		}else{
+			var args="[\""+$('#inputLoginId').val()+"\",\""+$('#inputPassword').val()+"\"]";
+			args=encodeURIComponent(args);
+			console.log(args);
 				
+			$.ajax({
+				url: 'http://localhost:4000/services/channels/mychannel/chaincodes/usercc?peer=peer0.org1.exigen.com&fcn=login&args='+args,
+				//dataType : "json",
+				contentType: "application/json; charset=utf-8",
+				// dataType: "jsonp",
+				type: 'GET',
+				jsonpCallback: 'callback', 
+				headers: {
+				  "authorization": "Bearer "+outboxToken
+				},
+				success: function (data) {            
+					console.log('Success: ')
+					if(data){
+	                    if(data=="fail"){
+	                    	event.preventDefault();
+	                        $('#errorLabel').html('User name and password is invalid.');
+	                    }else{//successfully
+	                    	//TODO here we need store current login user token
+	                    	setGToken(outboxToken);
+	                    	
+	                    	$( "#loginForm" ).submit();
+	                    } 
+					}
+				},
+				error: function (xhr, status, error) {
+					event.preventDefault();
+					console.log('Error: ' + error.message);
+					$('#errorLabel').html('Error connecting the server'+error.message);
+				},
+			});    	
+		}
+	});
+
+    
+
+			
 		
 });
 

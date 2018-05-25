@@ -38,6 +38,20 @@ type User struct {
  * Best practice is to have any Ledger initialization in separate function -- see initUser()
  */
 func (s *SmartContract) Init(APIstub shim.ChaincodeStubInterface) sc.Response {
+	users := []User{
+
+		User{LoginID: "test01", PWD: "pass01", FirstName: "First01,", LastName: "Last01"},
+		User{LoginID: "test02", PWD: "pass02", FirstName: "First02", LastName: "Last02"},
+	}
+
+	i := 0
+	for i < len(users) {
+		fmt.Println("i is ", i)
+		userAsBytes, _ := json.Marshal(users[i])
+		APIstub.PutState("USER"+strconv.Itoa(i), userAsBytes)
+		fmt.Println("Added", users[i])
+		i = i + 1
+	}
 	return shim.Success(nil)
 }
 

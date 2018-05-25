@@ -10,11 +10,8 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/bc-claim.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    
-    
-    
-    
   </head>
 
   <body>
@@ -77,7 +74,7 @@ $(document).ready(function() {
         type: 'GET',
         jsonpCallback: 'callback', 
         headers: {
-          "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1MjcxNjY1MjAsInVzZXJuYW1lIjoiSmltIiwib3JnTmFtZSI6Ik9yZzEiLCJpYXQiOjE1MjcxMzA1MjB9.11pZDEA_0tHHC2-Rore-s6N2-Hi4KqVd2jLG60BncZs"
+          "authorization": "Bearer "+getGToken()
         },
         success: function (data) {            
             console.log('Success: ')

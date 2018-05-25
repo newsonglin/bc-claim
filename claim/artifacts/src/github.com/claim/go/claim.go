@@ -38,6 +38,29 @@ type MedicalRecord struct {
  * Best practice is to have any Ledger initialization in separate function -- see initMD()
  */
 func (s *SmartContract) Init(APIstub shim.ChaincodeStubInterface) sc.Response {
+	
+	medicalRecords := []MedicalRecord{
+		MedicalRecord{MedicalID: "MDCN00000001", Hospital: "Ruijin Hospital", Medicines: "Aspirin,", Owner: "Zhao Yi"},
+		MedicalRecord{MedicalID: "MDCN00000002", Hospital: "Ruijin Hospital", Medicines: "Penicillin", Owner: "Qian Er"},
+		MedicalRecord{MedicalID: "MDCN00000003", Hospital: "Heping Hospital", Medicines: "Penicillin", Owner: "Sun San"},
+		MedicalRecord{MedicalID: "MDCN00000004", Hospital: "Heping Hospital", Medicines: "Erythromycin", Owner: "Li Si"},
+		MedicalRecord{MedicalID: "MDCN00000005", Hospital: "336 Hospital", Medicines: "Erythromycin", Owner: "Zhou Wu"},
+		MedicalRecord{MedicalID: "MDCN00000006", Hospital: "Redcross Hospital", Medicines: "Penicillin", Owner: "Zheng Liu"},
+		MedicalRecord{MedicalID: "MDCN00000007", Hospital: "Redcross Hospital", Medicines: "Aspirin", Owner: "Wang Qi"},
+		MedicalRecord{MedicalID: "MDCN00000008", Hospital: "Suzhou Children Hospital", Medicines: "ChuanBeiPiPa", Owner: "Feng Ba"},
+		MedicalRecord{MedicalID: "MDCN00000009", Hospital: "Suzhou Children Hospital", Medicines: "Erythromycin", Owner: "Chen Jiu"},
+		MedicalRecord{MedicalID: "MDCN00000010", Hospital: "336 Hospital", Medicines: "Erythromycin", Owner: "Shotaro"},
+	}
+
+	i := 0
+	for i < len(medicalRecords) {
+		fmt.Println("i is ", i)
+		medicalRecordAsBytes, _ := json.Marshal(medicalRecords[i])
+		APIstub.PutState("MR"+strconv.Itoa(i), medicalRecordAsBytes)
+		fmt.Println("Added", medicalRecords[i])
+		i = i + 1
+	}
+	
 	return shim.Success(nil)
 }
 
