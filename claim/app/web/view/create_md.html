@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Exigen BlockChain Create Medical Record</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/bc-claim.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+
+  <body>
+	<nav class="navbar navbar-green">
+	  <div class="container-fluid">
+		<div class="navbar-header">
+		  <a class="navbar-brand">EBlockChain</a>
+		</div>
+		<ul class="nav navbar-nav">
+		  <li class="active"><a href="#">Hospital</a></li>
+		  <li><a href="#">Insurer</a></li>
+		  <li><a href="#">Government</a></li>
+		</ul>
+		<ul class="nav navbar-nav navbar-right">
+		  <li><a href="#"><span class="glyphicon glyphicon-user"></span> My Profile</a></li>
+		  <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+		</ul>
+	  </div>
+	</nav>  
+  
+<div class="container">
+  <h2>Medical Record Form: populate data to chain</h2>
+  <form class="form-horizontal">
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Medical ID</label>
+      <div class="col-sm-8">
+        <input class="form-control" id="medical-id" type="text" placeholder="Please input">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Hospital Name</label>
+      <div class="col-sm-8">
+        <input class="form-control" id="medical-id" type="text" placeholder="Please input">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Medicines</label>
+      <div class="col-sm-8">
+        <input class="form-control" id="medical-id" type="text" placeholder="Please input">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Owner</label>
+      <div class="col-sm-8">
+        <input class="form-control" id="medical-id" type="text" placeholder="Please input">
+      </div>
+    </div>
+    <div class="button" align="center">
+        <button class="btn btn-primary " id="addBtn" type="button">Add to Blockchain</button>
+        <button class="btn btn-primary " id="addBtn" type="button">Backto Main List</button>
+    </div>
+  </form>
+  
+
+      
+</div>
+      <div class="error-messages">
+        <label id="errorLabel" class="error"></label>
+      </div>
+<p class="mt-5 mb-3 text-muted" align="center" valign="bottom">&copy; 2017-2018</p>
+  </body>
+</html>
