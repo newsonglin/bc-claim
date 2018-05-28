@@ -16,6 +16,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	sc "github.com/hyperledger/fabric/protos/peer"
@@ -126,14 +127,68 @@ func (s *SmartContract) initMD(APIstub shim.ChaincodeStubInterface) sc.Response 
 }
 
 func (s *SmartContract) createMD(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
-	if len(args) != 5 {
-		return shim.Error("Incorrect number of arguments. Expecting 5")
+	if len(args) != 4 {
+		return shim.Error("Incorrect number of arguments. Expecting 4")
 	}
 
-	var medicalRecord = MedicalRecord{MedicalID: args[1], Hospital: args[2], Medicines: args[3], Owner: args[4]}
+//==========BEGIN========Move this block stupid code outside a method when I have time later=====================	
+	startKey := "MR0"
+	endKey := "MR999"
+
+	resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	
+
+
+	var medicalRecord MedicalRecord
+	currentKey:="MR0"
+	maxKeyIndex:=0
+	
+	for resultsIterator.HasNext() {
+		queryResponse, err := resultsIterator.Next()
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		//fmt.Printf(string(queryResponse.Value))
+		
+
+        err = json.Unmarshal(queryResponse.Value, &medicalRecord)
+        if err != nil {
+            return shim.Error(err.Error())
+        }
+    
+
+	    if(medicalRecord.MedicalID==args[0]){
+    	    return shim.Error("MedicalRecord is already exist:"+args[0])
+        }
+		
+        currentKey=queryResponse.Key
+        currentKey=strings.Replace(currentKey, "MR", "", -1)
+        currentKeyIndex, parseError := strconv.Atoi(currentKey)
+        if parseError != nil {
+          return shim.Error(err.Error())
+        }
+        
+        if(currentKeyIndex>maxKeyIndex){
+        	maxKeyIndex=currentKeyIndex
+        }
+        
+	}
+
+	fmt.Printf("- createMD max key index:\n %d \n", maxKeyIndex)
+	maxKeyIndex=maxKeyIndex+1;
+    currentKey="MR"+strconv.Itoa(maxKeyIndex)
+	fmt.Println("- createMD new key to be used:\n"+currentKey+"\n")
+	
+	resultsIterator.Close()
+//==========END========Move this block stupid code outside a method when I have time later=====================	
+
+	medicalRecord = MedicalRecord{MedicalID: args[0], Hospital: args[1], Medicines: args[2], Owner: args[3]}
 
 	medicalRecordAsBytes, _ := json.Marshal(medicalRecord)
-	APIstub.PutState(args[0], medicalRecordAsBytes)
+	APIstub.PutState(currentKey, medicalRecordAsBytes)
 
 	return shim.Success(nil)
 }
@@ -176,7 +231,7 @@ func (s *SmartContract) searchAll(APIstub shim.ChaincodeStubInterface) sc.Respon
 	}
 	buffer.WriteString("]")
 
-	fmt.Printf("- searchAll:\n%s\n", buffer.String())
+	//fmt.Printf("- searchAll:\n%s\n", buffer.String())
 
 	return shim.Success(buffer.Bytes())
 }

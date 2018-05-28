@@ -62,8 +62,11 @@ func TestClaimAll(t *testing.T) {
 	//Invoke createMD
 	fmt.Println("Test create medical record ==================")
 	newMD:=[] byte("{\"medicalID\":\"TEST\",\"hospital\":\"TEST Hospital\",\"medicines\":\"TEST Aspirin\",\"owner\":\"TEST Zhao Yi\"}")
-	checkClaimInvoke(t, stub, [][]byte{[]byte("createMD"),[]byte("MR9"), []byte("TEST"),[]byte("TEST Hospital"),[]byte("TEST Aspirin"),[]byte("TEST Zhao Yi"),}, nil)
-	checkClaimInvoke(t, stub, [][]byte{[]byte("searchMD"), []byte("MR9")}, newMD)
+	checkClaimInvoke(t, stub, [][]byte{[]byte("createMD"), []byte("TEST"),[]byte("TEST Hospital"),[]byte("TEST Aspirin"),[]byte("TEST Zhao Yi"),}, nil)
+	checkClaimInvoke(t, stub, [][]byte{[]byte("searchMD"), []byte("MR10")}, newMD)
+	checkClaimInvoke(t, stub, [][]byte{[]byte("createMD"), []byte("TEST2"),[]byte("TEST Hospital"),[]byte("TEST Aspirin"),[]byte("TEST Zhao Yi"),}, nil)
+	checkClaimInvoke(t, stub, [][]byte{[]byte("createMD"), []byte("TEST3"),[]byte("TEST Hospital"),[]byte("TEST Aspirin"),[]byte("TEST Zhao Yi"),}, nil)
+	checkClaimInvoke(t, stub, [][]byte{[]byte("createMD"), []byte("TEST4"),[]byte("TEST Hospital"),[]byte("TEST Aspirin"),[]byte("TEST Zhao Yi"),}, nil)
 	
 	//Invoke searchAll
 	fmt.Println("Test search all medical records ==================")

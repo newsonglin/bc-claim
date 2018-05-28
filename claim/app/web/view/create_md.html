@@ -12,65 +12,115 @@
     <script src="../js/jquery-3.3.1.min.js"></script>
     <script src="../js/bc-claim.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    
+    <!-- Custom styles for this template -->
+    <link href="../css/main.css" rel="stylesheet">
   </head>
 
   <body>
-	<nav class="navbar navbar-green">
-	  <div class="container-fluid">
-		<div class="navbar-header">
-		  <a class="navbar-brand">EBlockChain</a>
+		<nav class="navbar navbar-green">
+		  <div class="container-fluid">
+			<div class="navbar-header">
+			  <a class="navbar-brand">EBlockChain</a>
+			</div>
+			<ul class="nav navbar-nav">
+			  <li class="active"><a href="#">Hospital</a></li>
+			  <li><a href="#">Insurer</a></li>
+			  <li><a href="#">Government</a></li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+			  <li><a href="#"><span class="glyphicon glyphicon-user"></span> My Profile</a></li>
+			  <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+			</ul>
+		  </div>
+		</nav>  
+  
+		<div class="container">
+		  <h2>Medical Record Form: populate data to chain</h2>
+		  <form class="form-horizontal" id="addMDForm">
+			<div class="form-group">
+			  <label class="col-sm-2 control-label">Medical ID</label>
+			  <div class="col-sm-8">
+				<input class="form-control" id="medical-id" type="text" placeholder="Please input">
+			  </div>
+			</div>
+			<div class="form-group">
+			  <label class="col-sm-2 control-label">Hospital Name</label>
+			  <div class="col-sm-8">
+				<input class="form-control" id="hospital" type="text" placeholder="Please input">
+			  </div>
+			</div>
+			<div class="form-group">
+			  <label class="col-sm-2 control-label">Medicines</label>
+			  <div class="col-sm-8">
+				<input class="form-control" id="medicines" type="text" placeholder="Please input">
+			  </div>
+			</div>
+			<div class="form-group">
+			  <label class="col-sm-2 control-label">Owner</label>
+			  <div class="col-sm-8">
+				<input class="form-control" id="owner" type="text" placeholder="Please input">
+			  </div>
+			</div>
+		  <div class="error-messages text-center">
+			<label id="errorLabel" class="error"></label>
+		  </div>
+			<div class="button" align="center">
+				<button class="btn btn-primary " id="addBtn" type="button">Add to Blockchain</button>
+				<button class="btn btn-primary " id="backBtn" type="button">Backto Main List</button>
+			</div>
+		  </form>
 		</div>
-		<ul class="nav navbar-nav">
-		  <li class="active"><a href="#">Hospital</a></li>
-		  <li><a href="#">Insurer</a></li>
-		  <li><a href="#">Government</a></li>
-		</ul>
-		<ul class="nav navbar-nav navbar-right">
-		  <li><a href="#"><span class="glyphicon glyphicon-user"></span> My Profile</a></li>
-		  <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-		</ul>
-	  </div>
-	</nav>  
-  
-<div class="container">
-  <h2>Medical Record Form: populate data to chain</h2>
-  <form class="form-horizontal">
-    <div class="form-group">
-      <label class="col-sm-2 control-label">Medical ID</label>
-      <div class="col-sm-8">
-        <input class="form-control" id="medical-id" type="text" placeholder="Please input">
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="col-sm-2 control-label">Hospital Name</label>
-      <div class="col-sm-8">
-        <input class="form-control" id="medical-id" type="text" placeholder="Please input">
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="col-sm-2 control-label">Medicines</label>
-      <div class="col-sm-8">
-        <input class="form-control" id="medical-id" type="text" placeholder="Please input">
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="col-sm-2 control-label">Owner</label>
-      <div class="col-sm-8">
-        <input class="form-control" id="medical-id" type="text" placeholder="Please input">
-      </div>
-    </div>
-    <div class="button" align="center">
-        <button class="btn btn-primary " id="addBtn" type="button">Add to Blockchain</button>
-        <button class="btn btn-primary " id="addBtn" type="button">Backto Main List</button>
-    </div>
-  </form>
-  
+		
 
-      
-</div>
-      <div class="error-messages">
-        <label id="errorLabel" class="error"></label>
-      </div>
-<p class="mt-5 mb-3 text-muted" align="center" valign="bottom">&copy; 2017-2018</p>
+		  <p class="mt-5 mb-3 text-muted" align="center" valign="bottom">&copy; 2017-2018</p>
+		  
+  <script type="text/javascript">
+      $("#addBtn").click(function(event) {
+      	  var valid=true;
+      	  var errorMsg="";
+  		  if(!$("#medical-id").val()){
+  		  	  valid=false;
+  		      errorMsg+="Medical ID is required <br>";
+  		  }
+  		  if(!$("#hospital").val()){
+  		  	  valid=false;
+  		      errorMsg+="Hospital is required <br>";
+  		  }
+  		  if(!$("#medicines").val()){
+  		  	  valid=false;
+  		      errorMsg+="Medicines is required <br>";
+  		  }
+  		  if(!$("#owner").val()){
+  		  	  valid=false;
+  		      errorMsg+="Owner is required <br>";
+  		  }
+  		  if(!valid){
+  		      $('#errorLabel').html(errorMsg);
+  		      return false;
+  		  }else{//Add record to block chain
+				$.ajax({
+					url: 'http://localhost:4000/services/channels/mychannel/chaincodes/mycc',
+					//dataType : "json",
+					contentType: "application/json; charset=utf-8",
+					// dataType: "jsonp",
+					data: '{"peers": ["peer0.org1.exigen.com","peer1.org1.exigen.com"],"fcn":"createMD","args":["'+$("#medical-id").val()+'","'+$("#hospital").val()+'","'+$("#medicines").val()+'","'+$("#owner").val()+'"]}',
+					type: 'POST',
+					jsonpCallback: 'callback', 
+			        headers: {
+                      "authorization": "Bearer "+getGToken()
+                    },
+					success: function (data) {            
+						console.log('Success: ')
+					},
+					error: function (xhr, status, error) {
+						console.log('Error: ' + error);
+						$('#errorLabel').html('Error creating the medical record:'+error);
+					},
+				});
+
+  		  }
+      });
+  </script>
   </body>
 </html>
