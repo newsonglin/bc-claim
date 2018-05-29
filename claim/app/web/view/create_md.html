@@ -10,6 +10,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script src="../js/bc-claim.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     
@@ -18,19 +19,19 @@
   </head>
 
   <body>
-		<nav class="navbar navbar-green">
+		<nav class="navbar navbar-custom">
 		  <div class="container-fluid">
 			<div class="navbar-header">
 			  <a class="navbar-brand">EBlockChain</a>
 			</div>
 			<ul class="nav navbar-nav">
-			  <li class="active"><a href="#">Hospital</a></li>
-			  <li><a href="#">Insurer</a></li>
-			  <li><a href="#">Government</a></li>
+			  <li class="active"><a href="./main.html">Hospital</a></li>
+			  <li><a href="./insurer.html">Insurer</a></li>
+			  <li><a href="./social-insurance.html">Social Insurance</a></li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 			  <li><a href="#"><span class="glyphicon glyphicon-user"></span> My Profile</a></li>
-			  <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+			  <li><a href="./login.html"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
 			</ul>
 		  </div>
 		</nav>  
@@ -71,11 +72,43 @@
 			</div>
 		  </form>
 		</div>
+	
 		
+    
+
+		<div class="modal fade" id="basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+		  <div class="modal-dialog">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">Result</h4>
+			  </div>
+			  <div class="modal-body">
+				<h3>Medical Record Created Successfully.</h3>
+			  </div>
+			  <div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			  </div>
+			</div>
+		  </div>
+		</div>
+
 
 		  <p class="mt-5 mb-3 text-muted" align="center" valign="bottom">&copy; 2017-2018</p>
 		  
   <script type="text/javascript">
+  
+      $("#backBtn").click(function(event) {
+      	  $("#addMDForm").attr("action", "./main.html");
+	      $("#addMDForm").submit();
+      });
+  
+	  $("#basicModal").on("hidden.bs.modal", function () {
+	      $("#addMDForm").attr("action", "./main.html");
+	      $("#addMDForm").submit();
+	  });
+
+      
       $("#addBtn").click(function(event) {
       	  var valid=true;
       	  var errorMsg="";
@@ -111,7 +144,13 @@
                       "authorization": "Bearer "+getGToken()
                     },
 					success: function (data) {            
-						console.log('Success: ')
+						console.log('Success: ');
+						$('#basicModal').modal('toggle');
+						setTimeout(function () {
+							$("#basicModal").modal("hide");
+							$("#addMDForm").attr("action", "./main.html");
+							$("#addMDForm").submit();
+						}, 5000);
 					},
 					error: function (xhr, status, error) {
 						console.log('Error: ' + error);
@@ -121,6 +160,10 @@
 
   		  }
       });
+      
+      
+      
+      
   </script>
   </body>
 </html>

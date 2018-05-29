@@ -2,3 +2,11 @@
   color: red;
   font-size: 16px; 
 }
+
+.navbar-custom {
+    background-color: #BBBBBB;
+}
+
+.navbar-nav .active{
+    background-color:lightgray;
+} 
