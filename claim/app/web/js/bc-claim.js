@@ -1,3 +1,7 @@
+//Include footer by script
+$(function(){
+    $("#footerContent").load("./foot.html"); 
+});
 
 function setGToken(val){
 	if (typeof(Storage) !== "undefined") {
