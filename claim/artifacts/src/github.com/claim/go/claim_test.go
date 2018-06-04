@@ -71,4 +71,10 @@ func TestClaimAll(t *testing.T) {
 	//Invoke searchAll
 	fmt.Println("Test search all medical records ==================")
 	checkClaimInvoke(t, stub, [][]byte{[]byte("searchAll")},nil)
+	
+	//Invoke verify
+	fmt.Println("Test verify ==================")
+    checkClaimInvoke(t, stub, [][]byte{[]byte("verifyMD"), []byte("MDCN00000001")},nil)
+
+
 }

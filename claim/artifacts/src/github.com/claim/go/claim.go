@@ -84,10 +84,58 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.searchAll(APIstub)
 	} else if function == "updateOwner" {
 		return s.updateOwner(APIstub, args)
+	} else if function == "verifyMD"{
+	    return s.verifyMD(APIstub,args)
 	}
 
 	return shim.Error("Invalid Smart Contract function name.")
 }
+
+/**
+  * Verify whether medical record exist or not.
+  * Will pass medical record ID as argument, if medical record exist, return the object,
+  * Otherwise return error.
+  *
+  */
+
+func (s *SmartContract) verifyMD(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1 argument with medicail record ID only")
+	}
+
+	startKey := "MR0"
+	endKey := "MR999"
+
+	resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	defer resultsIterator.Close()
+
+	// buffer is a JSON array containing QueryResults
+	var medicalRecord MedicalRecord
+	for resultsIterator.HasNext() {
+		queryResponse, err := resultsIterator.Next()
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		
+		err = json.Unmarshal(queryResponse.Value, &medicalRecord)
+        if err != nil {
+            return shim.Error(err.Error())
+        }
+    
+
+		if(medicalRecord.MedicalID==args[0]){//Found the correct record, return it.
+            return shim.Success([]byte(queryResponse.Value))
+		}
+	}
+
+    return shim.Success([]byte("fail"))
+	
+}
+
 
 func (s *SmartContract) searchMD(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 

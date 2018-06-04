@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -16,10 +16,11 @@
     
     <!-- Custom styles for this template -->
     <link href="../css/main.css" rel="stylesheet">
-  </head>
+</head>
 
-  <body class="text-center">
-		<nav class="navbar navbar-custom">
+<body class="text-center">
+		
+        <nav class="navbar navbar-custom">
 		  <div class="container-fluid">
 			<div class="navbar-header">
 			  <a class="navbar-brand">EBlockChain</a>
@@ -35,11 +36,76 @@
 			</ul>
 		  </div>
 		</nav>  
+
+		
 		<div class="container">
-			<form>
-			  <pre>Insurer</pre>
-			</form>
+		  <form class="form-horizontal" id="addMDForm">
+			<div class="form-group">
+			  <label class="col-sm-2 control-label">Medical ID</label>
+			  <div class="col-sm-8">
+				<input class="form-control" id="medical-id" type="text" placeholder="Please input the medical ID">
+			  </div>
+			</div>
+			<div class="form-group">
+			  <label class="col-sm-2 control-label">Owner</label>
+			  <div class="col-sm-8 ">
+				<input class="form-control" id="owner" type="text"  disabled>
+			  </div>
+			</div>
+			<div class="form-group">
+			  <label class="col-sm-2 control-label">Claim Amount($)</label>
+			  <div class="col-sm-8">
+				<input class="form-control" id="claim-amount" type="text" disabled>
+			  </div>
+			</div>
+		  <div class="error-messages text-center">
+			<label id="errorLabel" class="error"></label>
+		  </div>
+			<div class="button" align="center">
+				<button class="btn btn-primary " id="verifyBtn" type="button">Veriy</button>
+			</div>
+		  </form>
 		</div>	
-		<div id="footerContent"></div>		
-  </body>
+		
+		<!-- footer go to here -->
+		<div id="footerContent"></div>	
+		
+		
+		
+<script type="text/javascript">
+$("#verifyBtn").click(function(event) {
+    var medicalID=$("#medical-id").val();
+    if(!medicalID){
+         $('#errorLabel').html("Medical ID is required for verification!");
+  	    return false;
+    }else{
+    	var args="[\""+medicalID+"\"]";
+    	args=encodeURI(args);
+		$.ajax({
+			url: 'http://localhost:4000/services/channels/mychannel/chaincodes/mycc?peer=peer0.org1.exigen.com&fcn=verifyMD&args='+args,
+			dataType : "json",
+			contentType: "application/json; charset=utf-8",
+			// dataType: "jsonp",
+			//data: '{"username": "Jim", "orgName":"Org1"}',
+			type: 'GET',
+			jsonpCallback: 'callback', 
+			headers: {
+			  "authorization": "Bearer "+getGToken()
+			},
+			success: function (data) {            
+				console.log('Success: ')
+				if(data){
+					$('#owner').val(data.owner);
+					$('#claim-amount').val(1 + Math.floor(Math.random() * 1000));	                
+				}
+			},
+			error: function (xhr, status, error) {
+				console.log('Error: ' + error.message);
+				$('#errorLabel').html('Error connecting to the server.'+error.message);
+			},
+		});
+	}
+});
+</script>
+</body>
 </html>
